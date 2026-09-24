@@ -1,0 +1,76 @@
+{% extends "warga/base_warga.html" %}
+{% block page_title %}Riwayat Pengajuan{% endblock %}
+{% block title %}Riwayat Pengajuan{% endblock %}
+
+{% block content %}
+<div class="mb-4 d-flex justify-content-between align-items-center">
+    <div>
+        <p class="text-muted mb-0" style="font-size: 0.9rem;">Berikut adalah daftar pengajuan bantuan sosial Anda.</p>
+    </div>
+    <a href="{% url 'warga:ajukan_bantuan' %}" class="v-btn-primary">
+        <i class="bi bi-plus-lg"></i> Ajukan Bantuan Baru
+    </a>
+</div>
+
+{% if daftar_pengajuan %}
+<div class="v-card" style="padding:0; overflow:hidden;">
+    <table class="v-table">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Tanggal Pengajuan</th>
+                <th>Jenis Bantuan</th>
+                <th>Status</th>
+                <th>Keputusan</th>
+                <th style="width:80px;text-align:center;">Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in daftar_pengajuan %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ p.tanggal_pengajuan|date:"d F Y" }}</td>
+                <td>{{ p.jenis_bantuan.nama_bantuan }}</td>
+                <td>
+                    {% if p.status == "DISETUJUI" %}
+                        <span class="status-badge status-success">Disetujui</span>
+                    {% elif p.status == "DITOLAK" %}
+                        <span class="status-badge status-danger">Ditolak</span>
+                    {% else %}
+                        <span class="status-badge {% if p.status == 'REKOMENDASI_TERSEDIA' %}status-progress{% else %}status-waiting{% endif %}">
+                            {% if p.status == 'REKOMENDASI_TERSEDIA' %}Sedang Diproses{% else %}Menunggu Verifikasi{% endif %}
+                        </span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if p.status == "DISETUJUI" %}
+                        <span class="status-badge status-success">Disetujui</span>
+                    {% elif p.status == "DITOLAK" %}
+                        <span class="status-badge status-danger">Ditolak</span>
+                    {% else %}
+                        <span class="text-muted">Dalam proses</span>
+                    {% endif %}
+                </td>
+                <td style="text-align:center;">
+                    <a href="{% url 'warga:detail_pengajuan' p.pk %}" class="v-btn-primary" style="padding:0.35rem 0.75rem;font-size:0.8rem;">
+                        Lihat
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="v-card text-center" style="padding:3.5rem 2rem;">
+    <i class="bi bi-inbox" style="font-size:3rem;color:var(--text-muted);display:block;margin-bottom:1rem;"></i>
+    <div style="font-size:1.1rem;font-weight:600;color:var(--text-main);margin-bottom:0.5rem;">Belum ada pengajuan</div>
+    <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:1.5rem;">
+        Anda belum pernah mengajukan bantuan. Mulai ajukan sekarang!
+    </p>
+    <a href="{% url 'warga:ajukan_bantuan' %}" class="v-btn-primary">
+        <i class="bi bi-send-fill"></i> Ajukan Bantuan
+    </a>
+</div>
+{% endif %}
+{% endblock %}

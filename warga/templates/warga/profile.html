@@ -1,0 +1,68 @@
+{% extends "warga/base_warga.html" %}
+{% block page_title %}Profile Warga{% endblock %}
+{% block title %}Profile Warga{% endblock %}
+
+{% block content %}
+<div class="profile-layout">
+    <div class="profile-summary v-card">
+        <div class="profile-avatar"><i class="bi bi-person-fill"></i></div>
+        <h3>{{ warga.nama }}</h3>
+        <div class="profile-role">Warga</div>
+        <div class="profile-summary-footer">
+            <i class="bi bi-shield-check"></i> Data terverifikasi
+        </div>
+    </div>
+
+    <div class="profile-details">
+        <section class="v-card profile-section">
+            <h3>Informasi Akun</h3>
+            <div class="profile-info-grid">
+                <div><span>Username</span><strong>{{ warga.user.username }}</strong></div>
+                <div><span>NIK</span><strong>{{ warga.nik|slice:":4" }}********{{ warga.nik|slice:"12:" }}</strong></div>
+                <div><span>Email</span><strong>{{ warga.user.email|default:"Belum diisi" }}</strong></div>
+                <div><span>Status</span><strong class="text-success">Aktif</strong></div>
+            </div>
+        </section>
+
+        <section class="v-card profile-section">
+            <h3>Data Warga</h3>
+            <div class="profile-info-grid">
+                <div><span>RT / RW</span><strong>RT {{ warga.rt }} / RW {{ warga.rw }}</strong></div>
+                <div><span>Nama lengkap</span><strong>{{ warga.nama }}</strong></div>
+            </div>
+            <button type="button" class="v-btn-outline mt-4" data-bs-toggle="collapse" data-bs-target="#editProfile">
+                <i class="bi bi-pencil"></i> Ubah Profil
+            </button>
+            <div id="editProfile" class="collapse mt-4">
+                <form method="post" class="profile-form">
+                    {% csrf_token %}
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                    </div>
+                    {% endfor %}
+                    <button type="submit" class="v-btn-primary"><i class="bi bi-check2"></i> Simpan Perubahan</button>
+                </form>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_style %}
+.profile-layout { display:grid; grid-template-columns:minmax(220px, 0.8fr) minmax(0, 2fr); gap:1rem; max-width:980px; }
+.profile-summary { min-height:260px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+.profile-avatar { width:110px; height:110px; border-radius:50%; background:#dbeafe; color:#2563eb; display:flex; align-items:center; justify-content:center; font-size:4rem; margin-bottom:1rem; }
+.profile-summary h3 { margin:0; color:#0f2b5b; font-size:1.1rem; }
+.profile-role { color:var(--text-muted); font-size:.85rem; margin-top:.3rem; }
+.profile-summary-footer { border-top:1px solid var(--border-color); width:100%; margin-top:1.5rem; padding-top:1rem; color:#16a34a; font-size:.8rem; }
+.profile-details { display:grid; gap:1rem; }
+.profile-section h3 { color:#0f2b5b; font-size:1rem; margin:0 0 1.25rem; }
+.profile-info-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.1rem 2rem; }
+.profile-info-grid span { display:block; color:var(--text-muted); font-size:.78rem; margin-bottom:.25rem; }
+.profile-info-grid strong { font-size:.9rem; font-weight:600; }
+.profile-form label { display:block; font-size:.82rem; font-weight:600; margin-bottom:.4rem; color:var(--text-muted); }
+@media (max-width:768px) { .profile-layout,.profile-info-grid { grid-template-columns:1fr; } }
+{% endblock %}

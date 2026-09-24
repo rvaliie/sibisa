@@ -1,0 +1,62 @@
+{% extends "warga/base_warga.html" %}
+{% block page_title %}Ajukan Bantuan Sosial{% endblock %}
+{% block title %}Ajukan Bantuan{% endblock %}
+
+{% block extra_style %}
+.form-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+}
+.form-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 0.4rem;
+}
+.form-control, .form-select {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+{% endblock %}
+
+{% block content %}
+<div class="form-wrapper">
+    <div class="v-card mb-4" style="background-color: #f0fdf4; border-color: #bbf7d0;">
+        <div class="d-flex align-items-start gap-2">
+            <i class="bi bi-info-circle-fill" style="color: #16a34a; font-size: 1.2rem;"></i>
+            <div style="font-size: 0.85rem; color: #166534;">
+                <strong>Catatan:</strong> Data NIK dan domisili akan diperoleh dari data registrasi Anda dan tidak perlu diisi ulang.
+            </div>
+        </div>
+    </div>
+
+    <div class="v-card">
+        <h5 style="font-weight: 700; margin-bottom: 1.5rem;">Lengkapi data berikut</h5>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="mb-3">
+                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <div class="mt-1" style="font-size:0.8rem;color:#ef4444;">
+                    <i class="bi bi-exclamation-circle me-1"></i>{{ field.errors|join:", " }}
+                </div>
+                {% endif %}
+                {% if field.help_text %}
+                <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.3rem;">{{ field.help_text }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <div class="d-flex gap-2 mt-4 pt-3" style="border-top: 1px solid var(--border-color);">
+                <button type="submit" class="v-btn-primary w-100">
+                    Kirim Pengajuan
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

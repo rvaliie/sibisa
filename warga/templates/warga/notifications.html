@@ -1,0 +1,60 @@
+{% extends "warga/base_warga.html" %}
+{% block page_title %}Notifikasi{% endblock %}
+{% block title %}Notifikasi{% endblock %}
+
+{% block content %}
+<div class="notification-page">
+    <div class="notification-heading">
+        <div>
+            <h2>Notifikasi</h2>
+            <p>Pembaruan terbaru terkait akun dan pengajuan bantuan Anda.</p>
+        </div>
+        <a href="{% url 'warga:dashboard' %}" class="v-btn-outline"><i class="bi bi-arrow-left"></i> Dashboard</a>
+    </div>
+
+    <div class="v-card notification-list">
+        {% for item in daftar_notifikasi %}
+        <div class="notification-item">
+            <div class="notification-icon notification-{{ item.tone }}"><i class="bi {{ item.icon }}"></i></div>
+            <div class="notification-content">
+                <div class="notification-title">{{ item.title }}</div>
+                <div class="notification-date">{{ item.date|date:"d F Y, H:i" }}</div>
+            </div>
+            {% if item.pk %}
+            <a href="{% url item.detail_url item.pk %}" class="notification-link" title="Lihat detail"><i class="bi bi-chevron-right"></i></a>
+            {% else %}
+            <a href="{% url item.detail_url %}" class="notification-link" title="Lihat profil"><i class="bi bi-chevron-right"></i></a>
+            {% endif %}
+        </div>
+        {% empty %}
+        <div class="notification-empty">
+            <i class="bi bi-bell-slash"></i>
+            <div>Belum ada notifikasi.</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_style %}
+.notification-page { max-width:900px; }
+.notification-heading { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1rem; }
+.notification-heading h2 { color:#0f2b5b; font-size:1.15rem; margin:0; font-weight:700; }
+.notification-heading p { color:var(--text-muted); font-size:.85rem; margin:.35rem 0 0; }
+.notification-list { padding:0; overflow:hidden; }
+.notification-item { display:flex; align-items:center; gap:1rem; padding:1.05rem 1.25rem; border-bottom:1px solid var(--border-color); }
+.notification-item:last-child { border-bottom:0; }
+.notification-icon { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex:0 0 auto; font-size:.95rem; }
+.notification-waiting { color:#d97706; background:#fef3c7; }
+.notification-success { color:#15803d; background:#dcfce7; }
+.notification-danger { color:#dc2626; background:#fee2e2; }
+.notification-info { color:#2563eb; background:#dbeafe; }
+.notification-content { flex:1; min-width:0; }
+.notification-title { color:#334155; font-size:.88rem; font-weight:600; }
+.notification-date { color:#94a3b8; font-size:.76rem; margin-top:.3rem; }
+.notification-link { color:#94a3b8; font-size:1rem; text-decoration:none; padding:.35rem; }
+.notification-link:hover { color:#0f2b5b; }
+.notification-empty { text-align:center; color:var(--text-muted); padding:3rem 1rem; }
+.notification-empty i { display:block; font-size:2.5rem; margin-bottom:.75rem; color:#93c5fd; }
+@media (max-width:600px) { .notification-heading { align-items:flex-start; flex-direction:column; } }
+{% endblock %}

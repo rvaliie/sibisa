@@ -1,0 +1,147 @@
+{% extends "warga/base_warga.html" %}
+{% block page_title %}Dashboard Warga{% endblock %}
+{% block title %}Dashboard Warga{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <div style="background: #e0f2fe; padding: 1.5rem; border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: space-between;">
+        <div>
+            <h4 style="margin: 0; font-weight: 700; color: #0f2b5b;">Selamat datang, {{ user.warga_profile.nama|default:user.username }}!</h4>
+            <p style="margin: 0.5rem 0 0 0; color: #334155; font-size: 0.9rem;">
+                Semoga segala urusan administrasi bantuan sosial Anda berjalan lancar. RT {{ user.warga_profile.rt }} / RW {{ user.warga_profile.rw }}
+            </p>
+        </div>
+        <div style="font-size: 3rem; color: #7dd3fc;">
+            <i class="bi bi-people-fill"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Stat Row -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-lg-3">
+        <div class="v-card text-center">
+            <div style="font-size: 2rem; color: #3b82f6; margin-bottom: 0.5rem;"><i class="bi bi-file-earmark-text"></i></div>
+            <div style="font-size: 1.5rem; font-weight: 700;">{{ jumlah_pengajuan }}</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Total Pengajuan</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="v-card text-center">
+            <div style="font-size: 2rem; color: #f59e0b; margin-bottom: 0.5rem;"><i class="bi bi-hourglass-split"></i></div>
+            <div style="font-size: 1.5rem; font-weight: 700;">{{ jumlah_menunggu|default:"0" }}</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Dalam Proses</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="v-card text-center">
+            <div style="font-size: 2rem; color: #22c55e; margin-bottom: 0.5rem;"><i class="bi bi-check-circle"></i></div>
+            <div style="font-size: 1.5rem; font-weight: 700;">{{ jumlah_disetujui|default:"0" }}</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Disetujui</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="v-card text-center">
+            <div style="font-size: 2rem; color: #ef4444; margin-bottom: 0.5rem;"><i class="bi bi-x-circle"></i></div>
+            <div style="font-size: 1.5rem; font-weight: 700;">{{ jumlah_ditolak|default:"0" }}</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Ditolak</div>
+        </div>
+    </div>
+</div>
+
+<!-- Action Cards -->
+<div class="row g-3">
+    <div class="col-md-6">
+        <div class="v-card h-100">
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <div style="width:42px;height:42px;background:#e0f2fe;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#3b82f6;font-size:1.2rem;">
+                    <i class="bi bi-plus-circle-fill"></i>
+                </div>
+                <div>
+                    <div style="font-weight:700;font-size:1rem;">Ajukan Bantuan Baru</div>
+                    <div style="font-size:0.8rem;color:var(--text-muted);">Kirim pengajuan bantuan sosial</div>
+                </div>
+            </div>
+            <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1.25rem;">
+                Ajukan permintaan bantuan sosial baru. Pastikan data NIK dan domisili Anda sudah benar sebelum mengajukan.
+            </p>
+            <a href="{% url 'warga:ajukan_bantuan' %}" class="v-btn-primary">
+                <i class="bi bi-send-fill"></i> Ajukan Sekarang
+            </a>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="v-card h-100">
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <div style="width:42px;height:42px;background:#f1f5f9;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#64748b;font-size:1.2rem;">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+                <div>
+                    <div style="font-weight:700;font-size:1rem;">Riwayat Pengajuan</div>
+                    <div style="font-size:0.8rem;color:var(--text-muted);">Pantau status pengajuan Anda</div>
+                </div>
+            </div>
+            <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1.25rem;">
+                Lihat semua pengajuan yang pernah Anda buat beserta status verifikasi dan keputusan dari validator.
+            </p>
+            <a href="{% url 'warga:riwayat' %}" class="v-btn-outline">
+                <i class="bi bi-list-ul"></i> Lihat Riwayat
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="v-card mt-4" style="padding:0; overflow:hidden;">
+    <div class="d-flex justify-content-between align-items-center p-4 border-bottom">
+        <div>
+            <h5 class="m-0 fw-bold" style="color:#0f2b5b;">Pengajuan Terbaru</h5>
+            <div class="text-muted mt-1" style="font-size:0.8rem;">Pantau pengajuan bantuan Anda</div>
+        </div>
+        <a href="{% url 'warga:riwayat' %}" class="v-btn-outline" style="padding:0.35rem 0.75rem;font-size:0.8rem;">Lihat Semua</a>
+    </div>
+
+    {% if pengajuan_terbaru %}
+    <div class="table-responsive">
+        <table class="v-table">
+            <thead>
+                <tr>
+                    <th>Tanggal Pengajuan</th>
+                    <th>Jenis Bantuan</th>
+                    <th>Status</th>
+                    <th style="width:90px;text-align:center;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in pengajuan_terbaru %}
+                <tr>
+                    <td>{{ p.tanggal_pengajuan|date:"d F Y" }}</td>
+                    <td>{{ p.jenis_bantuan.nama_bantuan }}</td>
+                    <td>
+                        {% if p.status == "DISETUJUI" %}
+                            <span class="status-badge status-success">Disetujui</span>
+                        {% elif p.status == "DITOLAK" %}
+                            <span class="status-badge status-danger">Ditolak</span>
+                        {% elif p.status == "REKOMENDASI_TERSEDIA" %}
+                            <span class="status-badge status-progress">Sedang Diproses</span>
+                        {% else %}
+                            <span class="status-badge status-waiting">Menunggu Verifikasi</span>
+                        {% endif %}
+                    </td>
+                    <td style="text-align:center;">
+                        <a href="{% url 'warga:detail_pengajuan' p.pk %}" class="v-btn-primary" style="padding:0.35rem 0.75rem;font-size:0.8rem;">
+                            Lihat
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center text-muted p-4" style="font-size:0.875rem;">
+        Belum ada pengajuan bantuan.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

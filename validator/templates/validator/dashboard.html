@@ -1,0 +1,104 @@
+{% extends "validator/base_validator.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<!-- Stats -->
+<div class="row g-4 mb-4">
+    <div class="col-6 col-lg-4">
+        <div class="v-card d-flex align-items-center gap-3">
+            <i class="bi bi-fire text-warning fs-3"></i>
+            <div>
+                <div class="fw-bold fs-5">{{ total }}</div>
+                <div class="text-muted" style="font-size:0.875rem;">Total Pengajuan</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-4">
+        <div class="v-card d-flex align-items-center gap-3">
+            <i class="bi bi-fire text-warning fs-3"></i>
+            <div>
+                <div class="fw-bold fs-5">{{ menunggu_desil }}</div>
+                <div class="text-muted" style="font-size:0.875rem;">Menunggu Verifikasi</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-4">
+        <div class="v-card d-flex align-items-center gap-3">
+            <i class="bi bi-fire text-warning fs-3"></i>
+            <div>
+                <div class="fw-bold fs-5">{{ ada_rekomendasi }}</div>
+                <div class="text-muted" style="font-size:0.875rem;">Rekomendasi Tersedia</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-4">
+        <div class="v-card d-flex align-items-center gap-3">
+            <i class="bi bi-fire text-warning fs-3"></i>
+            <div>
+                <div class="fw-bold fs-5">{{ disetujui }}</div>
+                <div class="text-muted" style="font-size:0.875rem;">Disetujui</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-4">
+        <div class="v-card d-flex align-items-center gap-3">
+            <i class="bi bi-fire text-warning fs-3"></i>
+            <div>
+                <div class="fw-bold fs-5">{{ ditolak }}</div>
+                <div class="text-muted" style="font-size:0.875rem;">Ditolak</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Table -->
+<div class="v-card p-0 overflow-hidden">
+    <div class="p-4 border-bottom border-light">
+        <h5 class="m-0 fw-bold fs-5">Pengajuan Terbaru</h5>
+    </div>
+
+    {% if data_terbaru %}
+    <div class="table-responsive">
+        <table class="v-table">
+            <thead>
+                <tr>
+                    <th>Nama</th>
+                    <th>NIK</th>
+                    <th>Jenis Bantuan</th>
+                    <th>Status</th>
+                    <th>Tanggal Pengajuan</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data_terbaru %}
+                <tr>
+                    <td class="fw-medium">{{ row.pengajuan.warga.nama }}</td>
+                    <td>{{ row.nik_mask }}</td>
+                    <td>{{ row.pengajuan.jenis_bantuan.nama_bantuan }}</td>
+                    <td>
+                        {% if row.pengajuan.status == "REKOMENDASI_TERSEDIA" %}
+                            <span class="status-badge status-rekomendasi">Rekomendasi Tersedia</span>
+                        {% else %}
+                            <span class="status-badge status-waiting">Menunggu Verifikasi</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-muted">{{ row.pengajuan.tanggal_pengajuan|date:"d M Y" }}</td>
+                    <td>
+                        <a href="{% url 'validator:detail_pengajuan' row.pengajuan.pk %}" class="v-btn-primary py-1 px-3">Detail</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="p-5 text-center text-muted">
+        Tidak ada pengajuan terbaru.
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

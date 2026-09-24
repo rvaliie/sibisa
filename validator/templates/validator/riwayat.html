@@ -1,0 +1,108 @@
+{% extends "validator/base_validator.html" %}
+{% block title %}Riwayat Pengajuan{% endblock %}
+{% block page_title %}Riwayat Pengajuan{% endblock %}
+
+{% block content %}
+<div class="v-card p-0 overflow-hidden">
+    <form method="get" class="p-3 border-bottom border-light d-flex gap-3 align-items-center bg-white">
+        <div class="input-group" style="width: 250px;">
+            <span class="input-group-text bg-white text-muted border-end-0"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control border-start-0 ps-0 shadow-none" placeholder="Cari nama atau NIK" id="searchInput" oninput="searchTable(this.value)">
+        </div>
+        <select name="jenis_bantuan" class="form-select w-auto shadow-none text-muted">
+            <option>Semua Jenis Bantuan</option>
+            {% for jenis_id, jenis_nama in jenis_bantuan_list %}
+            <option value="{{ jenis_id }}" {% if selected_jenis == jenis_id|stringformat:"s" %}selected{% endif %}>{{ jenis_nama }}</option>
+            {% endfor %}
+        </select>
+        <div class="input-group w-auto">
+            <span class="input-group-text bg-white text-muted"><i class="bi bi-calendar3"></i></span>
+            <input type="date" name="tanggal_mulai" value="{{ tanggal_mulai }}" class="form-control shadow-none text-muted" title="Tanggal mulai">
+            <input type="date" name="tanggal_selesai" value="{{ tanggal_selesai }}" class="form-control shadow-none text-muted" title="Tanggal selesai">
+        </div>
+        <button type="submit" class="v-btn-primary ms-auto">Filter</button>
+    </form>
+
+    {% if data %}
+    <div class="table-responsive">
+        <table class="v-table" id="mainTable">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>NIK</th>
+                    <th>Nama</th>
+                    <th>Jenis Bantuan</th>
+                    <th>Prediksi</th>
+                    <th>Keputusan</th>
+                    <th>Tanggal Pengajuan</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data %}
+                <tr class="table-row" data-search="{{ row.pengajuan.warga.nama|lower }} {{ row.pengajuan.warga.nik }}">
+                    <td class="text-muted">{{ forloop.counter }}</td>
+                    <td>{{ row.nik_mask }}</td>
+                    <td class="fw-medium">{{ row.pengajuan.warga.nama }}</td>
+                    <td>{{ row.pengajuan.jenis_bantuan.nama_bantuan }}</td>
+                    
+                    <td>
+                        {% if row.pengajuan.hasil_prediksi %}
+                            {% if row.pengajuan.hasil_prediksi.prediksi == "LAYAK" %}
+                                <span class="status-badge status-success">Layak</span>
+                            {% else %}
+                                <span class="status-badge status-danger">Tidak Layak</span>
+                            {% endif %}
+                        {% else %}
+                            <span class="text-muted">—</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if row.pengajuan.status == "DISETUJUI" %}
+                            <span class="status-badge status-success">Disetujui</span>
+                        {% else %}
+                            <span class="status-badge status-danger">Ditolak</span>
+                        {% endif %}
+                    </td>
+                    
+                    <td class="text-muted">{{ row.pengajuan.tanggal_pengajuan|date:"d M Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="p-3 text-muted" style="font-size:0.875rem;" id="tableFooter">
+        Menampilkan data riwayat keputusan
+    </div>
+
+    <div id="emptyFiltered" style="display:none; text-align:center; padding:3rem; color:var(--text-muted);">
+        Tidak ada data yang cocok dengan pencarian.
+    </div>
+
+    {% else %}
+    <div class="p-5 text-center text-muted">
+        Belum ada riwayat pengajuan yang selesai.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+function searchTable(query) {
+    const q = query.toLowerCase().trim();
+    const rows = document.querySelectorAll('.table-row');
+    let visibleCount = 0;
+    rows.forEach(row => {
+        const text = row.dataset.search || '';
+        const show = !q || text.includes(q);
+        row.style.display = show ? '' : 'none';
+        if (show) visibleCount++;
+    });
+    
+    const emptyMsg = document.getElementById('emptyFiltered');
+    if (emptyMsg) emptyMsg.style.display = visibleCount === 0 ? 'block' : 'none';
+}
+</script>
+{% endblock %}

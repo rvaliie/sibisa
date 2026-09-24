@@ -1,0 +1,233 @@
+{% extends "validator/base_validator.html" %}
+{% load warga_format %}
+{% block title %}Detail Pengajuan{% endblock %}
+{% block page_title %}
+    <a href="{% url 'validator:data_pengajuan' %}" class="text-muted text-decoration-none me-2">Data Pengajuan</a>
+    <i class="bi bi-chevron-right text-muted mx-2 fs-6"></i>
+    Detail Pengajuan
+{% endblock %}
+
+{% block extra_style %}
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+@media (max-width: 992px) {
+    .detail-grid { grid-template-columns: 1fr; }
+}
+
+.info-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.info-list li {
+    display: flex;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+.info-label {
+    width: 150px;
+    font-weight: 600;
+    color: var(--text-main);
+    flex-shrink: 0;
+}
+.info-value {
+    color: var(--text-muted);
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: var(--text-main);
+}
+
+.prediction-box {
+    background-color: #dcfce7; /* Light green */
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+.prediction-box.danger {
+    background-color: #fee2e2;
+    border-color: #fecaca;
+}
+
+.recommendation-box {
+    background-color: #e0f2fe; /* Light blue */
+    border: 1px solid #bae6fd;
+    border-radius: 8px;
+    padding: 1.25rem;
+    color: #0369a1;
+    font-size: 0.9rem;
+}
+{% endblock %}
+
+{% block content %}
+<div class="detail-grid">
+
+    <!-- DATA PEMOHON -->
+    <div class="v-card">
+        <h3 class="section-title">Data Pemohon</h3>
+        <ul class="info-list">
+            <li>
+                <div class="info-label">Nama</div>
+                <div class="info-value">: {{ pengajuan.warga.nama }}</div>
+            </li>
+            <li>
+                <div class="info-label">NIK</div>
+                <div class="info-value">: {{ pengajuan.warga.nik }}</div>
+            </li>
+            <li>
+                <div class="info-label">RT/RW</div>
+                <div class="info-value">: RT {{ pengajuan.warga.rt }}/RW {{ pengajuan.warga.rw }}</div>
+            </li>
+            <li>
+                <div class="info-label">Jenis Bantuan</div>
+                <div class="info-value">: {{ pengajuan.jenis_bantuan.nama_bantuan }}</div>
+            </li>
+            <li>
+                <div class="info-label">Jumlah Tanggungan</div>
+                <div class="info-value">: {{ pengajuan.jumlah_tanggungan }} orang</div>
+            </li>
+            <li>
+                <div class="info-label">Penghasilan</div>
+                <div class="info-value">: Rp {{ pengajuan.penghasilan|rupiah }}</div>
+            </li>
+            <li>
+                <div class="info-label">Tanggal Pengajuan</div>
+                <div class="info-value">: {{ pengajuan.tanggal_pengajuan|date:"d F Y" }}</div>
+            </li>
+            <li>
+                <div class="info-label">Cek Desil</div>
+                <div class="info-value">
+                    : <a href="https://cekbansos.kemensos.go.id/" target="_blank" rel="noopener noreferrer">
+                        Buka situs Cek Bansos <i class="bi bi-box-arrow-up-right"></i>
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <!-- DATA VERIFIKASI (DESIL) -->
+    <div class="v-card">
+        <h3 class="section-title">Data Verifikasi</h3>
+        
+        <form method="post" action="{% url 'validator:detail_pengajuan' pengajuan.pk %}">
+            {% csrf_token %}
+            <input type="hidden" name="submit_desil" value="1">
+            
+            <div class="mb-3">
+                <label class="form-label fw-semibold" style="font-size:0.9rem; color:var(--text-main);">Desil</label>
+                {% if pengajuan.desil is not None %}
+                    <div class="form-control bg-light text-muted border-0 shadow-none">
+                        Desil {{ pengajuan.desil }}
+                    </div>
+                {% else %}
+                    <select name="desil" class="form-select shadow-none" required>
+                        <option value="">Pilih desil (1-10)</option>
+                        {% for i in "123456789"|make_list %}
+                        <option value="{{ i }}">{{ i }}</option>
+                        {% endfor %}
+                        <option value="10">10</option>
+                    </select>
+                {% endif %}
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-semibold" style="font-size:0.9rem; color:var(--text-main);">Catatan Verifikasi (opsional)</label>
+                {% if pengajuan.desil is not None %}
+                    <div class="p-3 bg-light rounded text-muted" style="font-size:0.9rem; min-height:80px;">
+                        Desil sudah disimpan.
+                    </div>
+                {% else %}
+                    <textarea name="catatan" class="form-control shadow-none" rows="3" placeholder="Masukkan catatan jika diperlukan..."></textarea>
+                {% endif %}
+            </div>
+
+            {% if pengajuan.desil is None %}
+                <button type="submit" class="v-btn-primary">Simpan Desil</button>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- HASIL PREDIKSI ML -->
+    <div class="v-card" style="{% if pengajuan.desil is None %}opacity:0.5; pointer-events:none;{% endif %}">
+        <h3 class="section-title">Hasil Prediksi Machine Learning</h3>
+        
+        {% if pengajuan.hasil_prediksi %}
+            <div class="prediction-box {% if pengajuan.hasil_prediksi.prediksi == 'TIDAK_LAYAK' %}danger{% endif %}">
+                <div class="mb-2 text-muted" style="font-size:0.9rem;">Prediksi: 
+                    <strong class="{% if pengajuan.hasil_prediksi.prediksi == 'LAYAK' %}text-success{% else %}text-danger{% endif %} fs-6">
+                        {{ pengajuan.hasil_prediksi.get_prediksi_display }}
+                    </strong>
+                </div>
+                <div class="text-muted" style="font-size:0.9rem;">Probabilitas: <strong>{% widthratio pengajuan.hasil_prediksi.probabilitas 1 100 %}%</strong></div>
+            </div>
+
+            <div class="recommendation-box">
+                <strong>Rekomendasi Sistem</strong><br>
+                Berdasarkan data yang dimasukkan, sistem memberikan rekomendasi 
+                <strong>{{ pengajuan.hasil_prediksi.get_prediksi_display|title }}</strong>
+                sebagai rekomendasi awal.
+            </div>
+        {% else %}
+            <div class="text-center p-4 border rounded" style="border-style:dashed!important;">
+                {% if pengajuan.desil is not None %}
+                    <p class="text-muted mb-3" style="font-size:0.9rem;">Data desil sudah lengkap. Silakan proses prediksi ML.</p>
+                    <form method="post" action="{% url 'validator:detail_pengajuan' pengajuan.pk %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="jalankan_prediksi" value="1">
+                        <button type="submit" class="v-btn-primary w-100">Proses Prediksi ML</button>
+                    </form>
+                {% else %}
+                    <p class="text-muted m-0" style="font-size:0.9rem;">Menunggu input desil pada tahap verifikasi.</p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- KEPUTUSAN VALIDATOR -->
+    <div class="v-card" style="{% if not pengajuan.hasil_prediksi %}opacity:0.5; pointer-events:none;{% endif %}">
+        <h3 class="section-title">Keputusan Validator</h3>
+        
+        {% if pengajuan.status == 'DISETUJUI' or pengajuan.status == 'DITOLAK' %}
+            <div class="alert {% if pengajuan.status == 'DISETUJUI' %}alert-success{% else %}alert-danger{% endif %} border-0 shadow-sm">
+                <strong>Keputusan Akhir: {{ pengajuan.get_status_display }}</strong>
+            </div>
+        {% else %}
+            <form method="post" action="{% url 'validator:detail_pengajuan' pengajuan.pk %}">
+                {% csrf_token %}
+                <input type="hidden" name="submit_keputusan" value="1">
+                
+                <div class="mb-4">
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="keputusan" id="kepSetuju" value="DISETUJUI" required>
+                        <label class="form-check-label" for="kepSetuju" style="font-size:0.95rem;">
+                            Disetujui
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="keputusan" id="kepTolak" value="DITOLAK" required>
+                        <label class="form-check-label" for="kepTolak" style="font-size:0.95rem;">
+                            Ditolak
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-semibold" style="font-size:0.9rem; color:var(--text-main);">Catatan Keputusan (opsional)</label>
+                    <textarea name="catatan" class="form-control shadow-none" rows="3" placeholder="Masukkan catatan jika diperlukan..."></textarea>
+                </div>
+
+                <button type="submit" class="v-btn-primary">Simpan Keputusan</button>
+            </form>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

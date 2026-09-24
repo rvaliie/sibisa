@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Warga - SIBISA</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .auth-container {
+            background-color: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            display: flex;
+            width: 1000px;
+            max-width: 95%;
+            overflow: hidden;
+            min-height: 600px;
+            margin: 2rem 0;
+        }
+        .auth-left {
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+            width: 50%;
+            padding: 4rem 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+        .auth-right {
+            width: 50%;
+            padding: 4rem 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 2rem;
+        }
+        .brand-icon {
+            width: 48px;
+            height: 48px;
+            background-color: #0f2b5b;
+            color: #ffffff;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        .brand-text h1 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #0f2b5b;
+            margin: 0;
+            line-height: 1.2;
+        }
+        .left-content p {
+            color: #334155;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 3rem;
+        }
+        .illustration {
+            width: 100%;
+            text-align: center;
+        }
+        .illustration i {
+            font-size: 12rem;
+            color: rgba(15, 43, 91, 0.1);
+        }
+        
+        .auth-form-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+        }
+        .auth-form-subtitle {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 2.5rem;
+        }
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 0.5rem;
+        }
+        .form-control {
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+        }
+        .form-control:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .btn-primary {
+            background-color: #0f2b5b;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            width: 100%;
+            margin-top: 1rem;
+        }
+        .btn-primary:hover {
+            background-color: #1e3a8a;
+        }
+        .auth-footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+        .auth-footer a {
+            color: #2563eb;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .auth-container { flex-direction: column; }
+            .auth-left, .auth-right { width: 100%; padding: 2rem; }
+            .auth-left { min-height: 250px; }
+            .illustration { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <!-- Left Side: Branding -->
+        <div class="auth-left">
+            <div class="brand-logo">
+                <div class="brand-icon">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>SIBISA<br>Sistem Informasi<br>Kelayakan Bantuan Sosial</h1>
+                </div>
+            </div>
+            <div class="left-content">
+                <p>Membantu proses pengajuan dan penilaian kelayakan bantuan sosial secara lebih transparan dan efisien.</p>
+            </div>
+            <div class="illustration">
+                <i class="bi bi-person-plus-fill"></i>
+            </div>
+        </div>
+
+        <!-- Right Side: Form -->
+        <div class="auth-right">
+            <h2 class="auth-form-title">Daftar Warga</h2>
+            <p class="auth-form-subtitle">Buat akun untuk mengajukan bantuan sosial</p>
+
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} py-2 px-3 mb-4 rounded-3 shadow-sm border-0" style="font-size:0.85rem;">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="mb-3">
+                    <label class="form-label" for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
+                    {{ field }}
+                    {% if field.errors %}
+                    <div class="text-danger small mt-1" style="font-size: 0.8rem;">
+                        <i class="bi bi-exclamation-circle me-1"></i>{{ field.errors|join:", " }}
+                    </div>
+                    {% endif %}
+                    {% if field.help_text %}
+                    <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.25rem;">{{ field.help_text }}</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                <button type="submit" class="btn btn-primary mt-2">
+                    Buat Akun
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                Sudah punya akun? <a href="{% url 'accounts:login' %}">Login di sini</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

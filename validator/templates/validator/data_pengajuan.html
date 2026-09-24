@@ -1,0 +1,86 @@
+{% extends "validator/base_validator.html" %}
+{% block title %}Data Pengajuan{% endblock %}
+{% block page_title %}Data Pengajuan{% endblock %}
+
+{% block content %}
+<div class="v-card p-0 overflow-hidden">
+    <form method="get" class="p-3 border-bottom border-light d-flex gap-3 align-items-center bg-white">
+        <div class="input-group" style="width: 250px;">
+            <span class="input-group-text bg-white text-muted border-end-0"><i class="bi bi-search"></i></span>
+            <input type="search" name="q" value="{{ search }}" class="form-control border-start-0 ps-0 shadow-none" placeholder="Cari nama atau NIK" id="searchInput">
+        </div>
+        <select name="status" class="form-select w-auto shadow-none text-muted">
+            <option value="">Semua Status</option>
+            {% for status_value, status_label in status_choices %}
+            <option value="{{ status_value }}" {% if selected_status == status_value %}selected{% endif %}>{{ status_label }}</option>
+            {% endfor %}
+        </select>
+        <select name="jenis_bantuan" class="form-select w-auto shadow-none text-muted">
+            <option value="">Semua Jenis Bantuan</option>
+            {% for jenis_id, jenis_nama in jenis_bantuan_list %}
+            <option value="{{ jenis_id }}" {% if selected_jenis == jenis_id|stringformat:"s" %}selected{% endif %}>{{ jenis_nama }}</option>
+            {% endfor %}
+        </select>
+        <select name="rt" class="form-select w-auto shadow-none text-muted">
+            <option value="">Semua RT/RW</option>
+            {% for rt in rt_list %}
+            <option value="{{ rt }}" {% if selected_rt == rt %}selected{% endif %}>RT {{ rt }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="v-btn-primary ms-auto">Filter</button>
+    </form>
+
+    {% if data %}
+    <div class="table-responsive">
+        <table class="v-table" id="mainTable">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>NIK</th>
+                    <th>Nama</th>
+                    <th>Jenis Bantuan</th>
+                    <th>Status</th>
+                    <th>Tanggal Pengajuan</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data %}
+                <tr class="table-row" data-search="{{ row.pengajuan.warga.nama|lower }} {{ row.pengajuan.warga.nik }}">
+                    <td class="text-muted">{{ forloop.counter }}</td>
+                    <td>{{ row.nik_mask }}</td>
+                    <td class="fw-medium">{{ row.pengajuan.warga.nama }}</td>
+                    <td>{{ row.pengajuan.jenis_bantuan.nama_bantuan }}</td>
+                    <td>
+                        {% if row.pengajuan.status == "REKOMENDASI_TERSEDIA" %}
+                            <span class="status-badge status-rekomendasi">Rekomendasi Tersedia</span>
+                        {% else %}
+                            <span class="status-badge status-waiting">Menunggu Verifikasi</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-muted">{{ row.pengajuan.tanggal_pengajuan|date:"d M Y" }}</td>
+                    <td>
+                        <a href="{% url 'validator:detail_pengajuan' row.pengajuan.pk %}" class="v-btn-primary py-1 px-3">Detail</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="p-3 text-muted" style="font-size:0.875rem;" id="tableFooter">
+        Menampilkan data pengajuan aktif
+    </div>
+
+    <div id="emptyFiltered" style="display:none; text-align:center; padding:3rem; color:var(--text-muted);">
+        Tidak ada data yang cocok dengan pencarian.
+    </div>
+
+    {% else %}
+    <div class="p-5 text-center text-muted">
+        Tidak ada pengajuan yang cocok dengan filter.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+

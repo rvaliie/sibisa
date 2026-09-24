@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block title %}Buat Akun Validator{% endblock %}
+
+{% block extra_style %}
+.admin-layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 1.5rem;
+    align-items: start;
+}
+@media (max-width: 900px) { .admin-layout { grid-template-columns: 1fr; } }
+
+.validator-list-item {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    transition: background var(--transition);
+}
+.validator-list-item:last-child { border-bottom: none; }
+.validator-list-item:hover { background: rgba(255,255,255,0.03); }
+
+.val-avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem; font-weight: 800; color: #fff; flex-shrink: 0;
+}
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-header-icon" style="background:linear-gradient(135deg,#8b5cf6,#ec4899);">
+        <i class="bi bi-person-gear"></i>
+    </div>
+    <div class="page-header-text">
+        <h1>Kelola Akun Validator</h1>
+        <p>Buat akun untuk petugas validator kelurahan. Hanya admin yang dapat mengakses halaman ini.</p>
+    </div>
+</div>
+
+<div class="admin-layout">
+
+    <!-- ===== FORM BUAT VALIDATOR ===== -->
+    <div>
+        <div class="sadeka-card">
+            <div class="mb-4" style="font-size:0.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.7px;">
+                <i class="bi bi-plus-circle me-1"></i> Tambah Validator Baru
+            </div>
+
+            <div class="sadeka-alert info mb-4">
+                <i class="bi bi-info-circle-fill sadeka-alert-icon"></i>
+                <div>
+                    Validator tidak bisa mendaftar sendiri. Buatkan akun di sini, lalu berikan
+                    <strong>username</strong> dan <strong>password</strong> kepada petugas bersangkutan secara langsung.
+                </div>
+            </div>
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="mb-3">
+                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                    <div class="mt-1" style="font-size:0.8rem;color:#fca5a5;">
+                        <i class="bi bi-exclamation-circle me-1"></i>{{ field.errors|join:", " }}
+                    </div>
+                    {% endif %}
+                    {% if field.help_text %}
+                    <div style="font-size:0.78rem;color:var(--text-muted);margin-top:3px;">{{ field.help_text }}</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn-sadeka-primary">
+                        <i class="bi bi-person-plus-fill"></i> Buat Akun Validator
+                    </button>
+                    <a href="/admin/" class="btn-sadeka-outline">
+                        <i class="bi bi-grid-3x3-gap"></i> Ke Admin Panel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== DAFTAR VALIDATOR ===== -->
+    <div>
+        <div class="sadeka-card" style="padding:0;overflow:hidden;">
+            <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border);font-size:0.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.7px;">
+                <i class="bi bi-people me-1"></i>
+                Validator Terdaftar
+                <span class="badge-status pending ms-2" style="font-size:0.7rem;padding:2px 8px;">{{ daftar_validator|length }}</span>
+            </div>
+
+            {% if daftar_validator %}
+                {% for v in daftar_validator %}
+                <div class="validator-list-item">
+                    <div class="val-avatar">{{ v.username|first|upper }}</div>
+                    <div style="flex:1;min-width:0;">
+                        <div style="font-size:0.875rem;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                            {{ v.first_name|default:v.username }}
+                        </div>
+                        <div style="font-size:0.75rem;color:var(--text-muted);">@{{ v.username }}</div>
+                    </div>
+                    <span class="badge-status disetujui" style="font-size:0.7rem;padding:2px 8px;">
+                        <i class="bi bi-check-circle-fill"></i> Aktif
+                    </span>
+                </div>
+                {% endfor %}
+            {% else %}
+            <div style="padding:2rem;text-align:center;color:var(--text-muted);font-size:0.85rem;">
+                <i class="bi bi-person-x" style="font-size:2rem;display:block;margin-bottom:0.5rem;"></i>
+                Belum ada validator terdaftar.
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Info box -->
+        <div class="sadeka-alert warning mt-3">
+            <i class="bi bi-shield-exclamation sadeka-alert-icon"></i>
+            <div style="font-size:0.8rem;">
+                <strong>Keamanan:</strong> Berikan kredensial validator secara tatap muka atau lewat saluran yang aman. Jangan kirim password via chat/email yang tidak terenkripsi.
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

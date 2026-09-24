@@ -1,0 +1,103 @@
+{% extends "warga/base_warga.html" %}
+{% load warga_format %}
+{% block page_title %}Detail Pengajuan{% endblock %}
+{% block title %}Detail Pengajuan #{{ pengajuan.pk }}{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+    <a href="{% url 'warga:riwayat' %}" style="text-decoration: none; color: var(--text-muted); font-weight: 500; font-size: 0.9rem;">
+        <i class="bi bi-arrow-left"></i> Kembali
+    </a>
+</div>
+
+<h4 style="font-weight: 700; margin-bottom: 1.5rem; color: #0f2b5b;">Detail Pengajuan</h4>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="v-card h-100">
+            <h6 style="font-weight: 700; margin-bottom: 1.25rem;">Informasi Pengajuan</h6>
+            <div class="d-flex mb-3">
+                <div style="width: 150px; color: var(--text-muted); font-size: 0.9rem;">Nama</div>
+                <div style="font-size: 0.9rem; font-weight: 500;">{{ user.warga_profile.nama }}</div>
+            </div>
+            <div class="d-flex mb-3">
+                <div style="width: 150px; color: var(--text-muted); font-size: 0.9rem;">NIK</div>
+                <div style="font-size: 0.9rem; font-weight: 500;">{{ pengajuan.warga.nik|slice:":4" }}********{{ pengajuan.warga.nik|slice:"12:" }}</div>
+            </div>
+            <div class="d-flex mb-3">
+                <div style="width: 150px; color: var(--text-muted); font-size: 0.9rem;">RT / RW</div>
+                <div style="font-size: 0.9rem; font-weight: 500;">RT {{ user.warga_profile.rt|stringformat:"02d" }} / RW {{ user.warga_profile.rw|stringformat:"02d" }}</div>
+            </div>
+            <div class="d-flex mb-3">
+                <div style="width: 150px; color: var(--text-muted); font-size: 0.9rem;">Jumlah Tanggungan</div>
+                <div style="font-size: 0.9rem; font-weight: 500;">{{ pengajuan.jumlah_tanggungan }} orang</div>
+            </div>
+            <div class="d-flex mb-3">
+                <div style="width: 150px; color: var(--text-muted); font-size: 0.9rem;">Penghasilan</div>
+                <div style="font-size: 0.9rem; font-weight: 500;">Rp {{ pengajuan.penghasilan|rupiah }}</div>
+            </div>
+            <div class="d-flex mb-3">
+                <div style="width: 150px; color: var(--text-muted); font-size: 0.9rem;">Jenis Bantuan</div>
+                <div style="font-size: 0.9rem; font-weight: 500;">Bantuan {{ pengajuan.jenis_bantuan.nama_bantuan }}</div>
+            </div>
+            <div class="d-flex mb-3">
+                <div style="width: 150px; color: var(--text-muted); font-size: 0.9rem;">Tanggal Pengajuan</div>
+                <div style="font-size: 0.9rem; font-weight: 500;">{{ pengajuan.tanggal_pengajuan|date:"d F Y" }}</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="v-card h-100">
+            <h6 style="font-weight: 700; margin-bottom: 1.25rem;">Status Pengajuan</h6>
+            <div style="position: relative; padding-left: 1.5rem; border-left: 2px solid #e2e8f0; margin-left: 0.5rem;">
+                
+                <div style="position: relative; margin-bottom: 1.5rem;">
+                    <div style="position: absolute; left: -1.9rem; top: 0; width: 14px; height: 14px; border-radius: 50%; background: #22c55e;"></div>
+                    <div style="font-weight: 600; font-size: 0.9rem;">Pengajuan Diterima</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">{{ pengajuan.tanggal_pengajuan|date:"d F Y" }}</div>
+                </div>
+
+                <div style="position: relative; margin-bottom: 1.5rem;">
+                    <div style="position: absolute; left: -1.9rem; top: 0; width: 14px; height: 14px; border-radius: 50%; background: {% if pengajuan.status == 'MENUNGGU_VERIFIKASI_DESIL' %}#3b82f6{% else %}#22c55e{% endif %};"></div>
+                    <div style="font-weight: 600; font-size: 0.9rem;">Verifikasi</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">
+                        {% if pengajuan.status == 'MENUNGGU_VERIFIKASI_DESIL' %}Sedang diproses{% elif pengajuan.status == 'REKOMENDASI_TERSEDIA' %}Pemeriksaan selesai{% else %}Selesai{% endif %}
+                    </div>
+                </div>
+
+                <div style="position: relative;">
+                    <div style="position: absolute; left: -1.9rem; top: 0; width: 14px; height: 14px; border-radius: 50%; background: {% if pengajuan.status in 'MENUNGGU_VERIFIKASI_DESIL REKOMENDASI_TERSEDIA' %}#cbd5e1{% elif pengajuan.status == 'DISETUJUI' %}#22c55e{% else %}#ef4444{% endif %}; border: 2px solid white;"></div>
+                    <div style="font-weight: 600; font-size: 0.9rem;">Keputusan</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">
+                        {% if pengajuan.status == 'DISETUJUI' %}
+                            <span style="color: #16a34a; font-weight: 600;">Disetujui</span>
+                        {% elif pengajuan.status == 'DITOLAK' %}
+                            <span style="color: #dc2626; font-weight: 600;">Ditolak</span>
+                        {% else %}
+                            Menunggu Keputusan
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="v-card mb-4" style="background-color: {% if pengajuan.status == 'DISETUJUI' %}#f0fdf4{% elif pengajuan.status == 'DITOLAK' %}#fef2f2{% else %}#eff6ff{% endif %}; border-color: {% if pengajuan.status == 'DISETUJUI' %}#bbf7d0{% elif pengajuan.status == 'DITOLAK' %}#fecaca{% else %}#bfdbfe{% endif %};">
+    <div class="d-flex align-items-start gap-2">
+        <i class="bi {% if pengajuan.status == 'DISETUJUI' %}bi-check-circle-fill{% elif pengajuan.status == 'DITOLAK' %}bi-x-circle-fill{% else %}bi-info-circle-fill{% endif %}" style="color: {% if pengajuan.status == 'DISETUJUI' %}#16a34a{% elif pengajuan.status == 'DITOLAK' %}#dc2626{% else %}#2563eb{% endif %}; font-size: 1.2rem;"></i>
+        <div style="font-size: 0.85rem; color: {% if pengajuan.status == 'DISETUJUI' %}#166534{% elif pengajuan.status == 'DITOLAK' %}#991b1b{% else %}#1e40af{% endif %};">
+            {% if pengajuan.status == 'DISETUJUI' %}
+                Pengajuan Anda disetujui oleh validator.
+            {% elif pengajuan.status == 'DITOLAK' %}
+                Pengajuan Anda ditolak oleh validator.
+                {% if pengajuan.verifikasi.catatan %}<div class="mt-1">Catatan: {{ pengajuan.verifikasi.catatan }}</div>{% endif %}
+            {% else %}
+                Pengajuan Anda sedang diproses oleh validator.
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
