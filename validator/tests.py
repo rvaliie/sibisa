@@ -17,6 +17,38 @@ class MaskNikTest(TestCase):
         self.assertEqual(mask_nik("123"), "***")
 
 
+class SettingsValidatorTest(TestCase):
+    def setUp(self):
+        self.validator = User.objects.create_user(
+            username="validator_settings",
+            password="kelurahan123",
+            role=User.Role.VALIDATOR,
+        )
+        self.client.login(username="validator_settings", password="kelurahan123")
+
+    def test_settings_page_terbuka_dan_menampilkan_form_password(self):
+        response = self.client.get("/validator/settings/")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Pengaturan")
+        self.assertContains(response, 'name="old_password"')
+        self.assertContains(response, 'name="new_password1"')
+        self.assertContains(response, 'name="new_password2"')
+
+    def test_validator_bisa_ubah_profil_dan_password(self):
+        response = self.client.post("/validator/settings/", {
+            "save_profile": "1",
+            "first_name": "Validator Baru",
+            "old_password": "kelurahan123",
+            "new_password1": "passBaru123",
+            "new_password2": "passBaru123",
+        }, follow=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.validator.refresh_from_db()
+        self.assertEqual(self.validator.first_name, "Validator Baru")
+        self.assertTrue(self.validator.check_password("passBaru123"))
+
+
 class DashboardValidatorTest(TestCase):
     def setUp(self):
         self.validator = User.objects.create_user(username="validator1", password="kelurahan123", role=User.Role.VALIDATOR)

@@ -39,6 +39,9 @@
                     <th>NIK</th>
                     <th>Nama</th>
                     <th>Jenis Bantuan</th>
+                    <th>Pekerjaan</th>
+                    <th>Daya Listrik</th>
+                    <th>Kondisi Rumah</th>
                     <th>Status</th>
                     <th>Tanggal Pengajuan</th>
                     <th>Aksi</th>
@@ -51,6 +54,9 @@
                     <td>{{ row.nik_mask }}</td>
                     <td class="fw-medium">{{ row.pengajuan.warga.nama }}</td>
                     <td>{{ row.pengajuan.jenis_bantuan.nama_bantuan }}</td>
+                    <td>{{ row.pengajuan.pekerjaan }}</td>
+                    <td>{{ row.pengajuan.daya_listrik }}</td>
+                    <td>{{ row.pengajuan.kondisi_rumah }}</td>
                     <td>
                         {% if row.pengajuan.status == "REKOMENDASI_TERSEDIA" %}
                             <span class="status-badge status-rekomendasi">Rekomendasi Tersedia</span>

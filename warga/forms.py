@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth.forms import PasswordChangeForm as DjangoPasswordChangeForm
 
 from pengajuan.models import JenisBantuan, Pengajuan, Warga
 
@@ -11,14 +12,27 @@ class PengajuanForm(forms.ModelForm):
 
     class Meta:
         model = Pengajuan
-        fields = ["jenis_bantuan", "jumlah_tanggungan", "penghasilan"]
+        fields = [
+            "jenis_bantuan",
+            "pekerjaan",
+            "daya_listrik",
+            "kondisi_rumah",
+            "jumlah_tanggungan",
+            "penghasilan",
+        ]
         widgets = {
             "jenis_bantuan": forms.Select(attrs={"class": "form-select"}),
+            "pekerjaan": forms.Select(attrs={"class": "form-select"}),
+            "daya_listrik": forms.Select(attrs={"class": "form-select"}),
+            "kondisi_rumah": forms.Select(attrs={"class": "form-select"}),
             "jumlah_tanggungan": forms.NumberInput(attrs={"class": "form-control", "min": 0}),
             "penghasilan": forms.NumberInput(attrs={"class": "form-control", "min": 0}),
         }
         labels = {
             "jenis_bantuan": "Jenis bantuan yang diajukan",
+            "pekerjaan": "Pekerjaan utama",
+            "daya_listrik": "Daya listrik rumah",
+            "kondisi_rumah": "Kondisi rumah",
             "jumlah_tanggungan": "Jumlah tanggungan keluarga",
             "penghasilan": "Penghasilan per bulan (Rp)",
         }
@@ -57,3 +71,7 @@ class ProfileForm(forms.ModelForm):
         if commit:
             warga.user.save(update_fields=["email"])
         return warga
+
+
+class WargaPasswordChangeForm(DjangoPasswordChangeForm):
+    pass

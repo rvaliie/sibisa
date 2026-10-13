@@ -1,9 +1,3 @@
-"""
-Fungsi prediksi untuk data pengajuan BARU (bukan data historis). Dipanggil
-dari validator (Tahap 8), bukan langsung oleh warga. Memakai pipeline yang
-sama persis dengan yang dipakai saat training (lewat file .joblib) supaya
-tidak ada perbedaan preprocessing antara training dan inference.
-"""
 from pathlib import Path
 
 import joblib
@@ -36,10 +30,6 @@ def _load_model():
 
 
 def predict_kelayakan(desil: int, jumlah_tanggungan: int, penghasilan: int) -> dict:
-    """Input: 3 fitur pengajuan (desil sudah diisi validator, tanggungan &
-    penghasilan dari form warga). Output: dict prediksi + probabilitas +
-    nama model yang dipakai -- SEMUA hasil dari sini adalah rekomendasi
-    awal, bukan keputusan final (itu tetap wewenang validator)."""
     loaded = _load_model()
     pipeline = loaded["pipeline"]
     model_name = loaded["model_name"]

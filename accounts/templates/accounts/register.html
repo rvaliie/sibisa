@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -57,15 +58,20 @@
             margin-bottom: 2rem;
         }
         .brand-icon {
-            width: 48px;
-            height: 48px;
-            background-color: #0f2b5b;
-            color: #ffffff;
+            width: 52px;
+            height: 52px;
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            background: rgba(15, 43, 91, 0.06);
+            box-shadow: inset 0 0 0 1px rgba(15, 43, 91, 0.08);
+        }
+
+        .brand-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
         .brand-text h1 {
             font-size: 1.25rem;
@@ -158,7 +164,7 @@
         <div class="auth-left">
             <div class="brand-logo">
                 <div class="brand-icon">
-                    <i class="bi bi-shield-check"></i>
+                    <img src="{% static 'images/logo-kota-tarakan.svg' %}" alt="Logo Kota Tarakan">
                 </div>
                 <div class="brand-text">
                     <h1>SIBISA<br>Sistem Informasi<br>Kelayakan Bantuan Sosial</h1>

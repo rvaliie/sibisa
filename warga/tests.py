@@ -7,6 +7,39 @@ from accounts.models import User
 from pengajuan.models import JenisBantuan, Pengajuan, Warga
 
 
+class ProfileWargaTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="warga_profile", password="kelurahan123", role=User.Role.WARGA)
+        self.warga = Warga.objects.create(user=self.user, nama="Warga Baru", nik="3573010101990002", rt="003", rw="004")
+        self.client.login(username="warga_profile", password="kelurahan123")
+
+    def test_profile_page_terbuka_dan_menampilkan_form_password(self):
+        response = self.client.get("/warga/profile/")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Profil")
+        self.assertContains(response, 'name="old_password"')
+        self.assertContains(response, 'name="new_password1"')
+        self.assertContains(response, 'name="new_password2"')
+
+    def test_warga_bisa_ubah_profil_dan_password(self):
+        response = self.client.post("/warga/profile/", {
+            "nama": "Warga Updated",
+            "rt": "004",
+            "rw": "005",
+            "email": "warga@email.com",
+            "old_password": "kelurahan123",
+            "new_password1": "passBaru123",
+            "new_password2": "passBaru123",
+        }, follow=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.warga.refresh_from_db()
+        self.user.refresh_from_db()
+        self.assertEqual(self.warga.nama, "Warga Updated")
+        self.assertEqual(self.user.email, "warga@email.com")
+        self.assertTrue(self.user.check_password("passBaru123"))
+
+
 class PengajuanBantuanTest(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username="citra", password="kelurahan123", role=User.Role.WARGA)
@@ -18,6 +51,9 @@ class PengajuanBantuanTest(TestCase):
     def test_ajukan_bantuan_berhasil_dan_status_awal_benar(self):
         response = self.client.post("/warga/ajukan/", {
             "jenis_bantuan": self.jenis.id,
+            "pekerjaan": "Wiraswasta",
+            "daya_listrik": "900 VA",
+            "kondisi_rumah": "Milik Sendiri",
             "jumlah_tanggungan": 3,
             "penghasilan": 1500000,
         }, follow=True)
@@ -26,6 +62,9 @@ class PengajuanBantuanTest(TestCase):
         self.assertEqual(pengajuan.status, Pengajuan.Status.MENUNGGU_VERIFIKASI_DESIL)
         self.assertIsNone(pengajuan.desil)  # desil belum diisi, itu tugas validator
         self.assertEqual(pengajuan.jumlah_tanggungan, 3)
+        self.assertEqual(pengajuan.pekerjaan, "Wiraswasta")
+        self.assertEqual(pengajuan.daya_listrik, "900 VA")
+        self.assertEqual(pengajuan.kondisi_rumah, "Milik Sendiri")
 
     def test_jenis_bantuan_nonaktif_tidak_bisa_dipilih(self):
         response = self.client.post("/warga/ajukan/", {
@@ -47,6 +86,9 @@ class PengajuanBantuanTest(TestCase):
         Pengajuan.objects.create(
             warga=self.warga,
             jenis_bantuan=self.jenis,
+            pekerjaan="Wiraswasta",
+            daya_listrik="900 VA",
+            kondisi_rumah="Milik Sendiri",
             jumlah_tanggungan=2,
             penghasilan=900000,
             status=Pengajuan.Status.MENUNGGU_VERIFIKASI_DESIL,
@@ -54,6 +96,9 @@ class PengajuanBantuanTest(TestCase):
 
         response = self.client.post("/warga/ajukan/", {
             "jenis_bantuan": self.jenis.id,
+            "pekerjaan": "Wiraswasta",
+            "daya_listrik": "900 VA",
+            "kondisi_rumah": "Milik Sendiri",
             "jumlah_tanggungan": 5,
             "penghasilan": 2000000,
         }, follow=True)
@@ -66,6 +111,9 @@ class PengajuanBantuanTest(TestCase):
         Pengajuan.objects.create(
             warga=self.warga,
             jenis_bantuan=self.jenis,
+            pekerjaan="Wiraswasta",
+            daya_listrik="900 VA",
+            kondisi_rumah="Milik Sendiri",
             jumlah_tanggungan=2,
             penghasilan=900000,
             status=Pengajuan.Status.DISETUJUI,
@@ -73,6 +121,9 @@ class PengajuanBantuanTest(TestCase):
 
         response = self.client.post("/warga/ajukan/", {
             "jenis_bantuan": self.jenis.id,
+            "pekerjaan": "Wiraswasta",
+            "daya_listrik": "900 VA",
+            "kondisi_rumah": "Milik Sendiri",
             "jumlah_tanggungan": 5,
             "penghasilan": 2000000,
         }, follow=True)

@@ -1,11 +1,12 @@
 from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
 from django.shortcuts import get_object_or_404, redirect, render
 
 from accounts.decorators import role_required
 from accounts.models import User
 from pengajuan.models import Pengajuan
 
-from .forms import PengajuanForm, ProfileForm
+from .forms import PengajuanForm, ProfileForm, WargaPasswordChangeForm
 
 
 @role_required(User.Role.WARGA)
@@ -96,15 +97,43 @@ def detail_pengajuan(request, pk):
 @role_required(User.Role.WARGA)
 def profile(request):
     warga = request.user.warga_profile
+    profile_form = ProfileForm(instance=warga)
+    password_form = WargaPasswordChangeForm(request.user)
+
     if request.method == "POST":
-        form = ProfileForm(request.POST, instance=warga)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Profil berhasil diperbarui.")
+        profile_updated = any(field in request.POST for field in ["nama", "rt", "rw", "email"])
+        password_updated = any(field in request.POST for field in ["old_password", "new_password1", "new_password2"])
+
+        profile_saved = False
+        password_saved = False
+
+        if profile_updated:
+            profile_form = ProfileForm(request.POST, instance=warga)
+            if profile_form.is_valid():
+                profile_form.save()
+                profile_saved = True
+
+        if password_updated:
+            password_form = WargaPasswordChangeForm(request.user, request.POST)
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)
+                password_saved = True
+
+        if profile_saved or password_saved:
+            messages.success(request, "Profil dan/atau password berhasil diperbarui.")
             return redirect("warga:profile")
-    else:
-        form = ProfileForm(instance=warga)
-    return render(request, "warga/profile.html", {"warga": warga, "form": form})
+
+        if profile_updated and not profile_form.is_valid():
+            messages.error(request, "Data profil tidak valid. Periksa kembali form yang Anda isi.")
+        if password_updated and not password_form.is_valid():
+            messages.error(request, "Password tidak valid. Periksa password lama dan konfirmasi password baru.")
+
+    return render(request, "warga/profile.html", {
+        "warga": warga,
+        "form": profile_form,
+        "password_form": password_form,
+    })
 
 
 @role_required(User.Role.WARGA)

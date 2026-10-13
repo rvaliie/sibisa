@@ -1,0 +1,61 @@
+{% extends "validator/base_validator.html" %}
+{% block title %}Pengaturan{% endblock %}
+{% block page_title %}Pengaturan{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="v-card h-100">
+            <h5 class="fw-bold mb-3">Profil Validator</h5>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="save_profile" value="1">
+                <div class="mb-3">
+                    <label for="id_first_name" class="form-label">{{ profile_form.first_name.label }}</label>
+                    {{ profile_form.first_name }}
+                    {% if profile_form.first_name.errors %}
+                        <div class="text-danger small mt-1">{{ profile_form.first_name.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+                <button type="submit" class="v-btn-primary">Simpan Profil</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="v-card h-100">
+            <h5 class="fw-bold mb-3">Ubah Password</h5>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="change_password" value="1">
+
+                <div class="mb-3">
+                    <label for="id_old_password" class="form-label">{{ password_form.old_password.label }}</label>
+                    {{ password_form.old_password }}
+                    {% if password_form.old_password.errors %}
+                        <div class="text-danger small mt-1">{{ password_form.old_password.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_new_password1" class="form-label">{{ password_form.new_password1.label }}</label>
+                    {{ password_form.new_password1 }}
+                    {% if password_form.new_password1.errors %}
+                        <div class="text-danger small mt-1">{{ password_form.new_password1.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_new_password2" class="form-label">{{ password_form.new_password2.label }}</label>
+                    {{ password_form.new_password2 }}
+                    {% if password_form.new_password2.errors %}
+                        <div class="text-danger small mt-1">{{ password_form.new_password2.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="v-btn-primary">Ubah Password</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

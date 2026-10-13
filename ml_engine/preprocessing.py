@@ -1,9 +1,3 @@
-"""
-Preprocessing dataset historis untuk training model kelayakan bansos.
-Sengaja dipisah dari train.py supaya langkah yang sama persis bisa dipakai
-ulang saat prediksi data baru di predict.py -- mencegah data leakage akibat
-preprocessing yang beda antara training dan inference.
-"""
 from pathlib import Path
 
 import pandas as pd

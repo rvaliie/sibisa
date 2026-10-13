@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -87,6 +88,13 @@
             align-items: center;
             gap: 10px;
             white-space: nowrap;
+        }
+
+        .sidebar-logo {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+            flex-shrink: 0;
         }
         
         .sidebar.collapsed .sidebar-brand {
@@ -378,6 +386,7 @@
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-brand">
+            <img src="{% static 'images/logo-kota-tarakan.svg' %}" alt="Logo Kota Tarakan" class="sidebar-logo">
             <span class="sidebar-brand-text">SIBISA</span>
             <!-- Fallback icon when collapsed -->
             <i class="bi bi-shield-check d-none"></i>

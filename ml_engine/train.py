@@ -1,12 +1,3 @@
-"""
-Training pipeline Tahap 6-7:
-Dataset historis -> preprocessing -> train-test split -> training beberapa
-kandidat model -> evaluasi -> pilih model terbaik BERDASARKAN HASIL EVALUASI
-(bukan diasumsikan Decision Tree otomatis menang) -> simpan model.
-
-Dijalankan lewat: python manage.py train_model
-(lihat pengajuan/management/commands/train_model.py)
-"""
 import json
 from pathlib import Path
 
@@ -31,9 +22,7 @@ MODEL_DIR = Path(__file__).resolve().parent / "saved_model"
 MODEL_PATH = MODEL_DIR / "model.joblib"
 METRICS_PATH = MODEL_DIR / "metrics.json"
 
-# Dataset dummy kita imbalance (~73% Diterima / 27% Ditolak), jadi semua
-# kandidat dikasih class_weight="balanced" supaya model tidak cuma
-# "malas" menebak Diterima terus demi accuracy tinggi.
+
 CANDIDATES = {
     "decision_tree": Pipeline([
         ("clf", DecisionTreeClassifier(max_depth=4, class_weight="balanced", random_state=42)),
@@ -66,8 +55,7 @@ def main():
 
     print(f"[train] Total data: {len(df)} | Diterima: {y.sum()} | Ditolak: {len(y) - y.sum()}")
 
-    # stratify=y: proporsi kelas di data train & test dijaga tetap mirip,
-    # penting karena datanya imbalance.
+
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42, stratify=y
     )
@@ -84,9 +72,7 @@ def main():
         for k, v in metrics.items():
             print(f"  {k}: {v}")
 
-    # Model terbaik dipilih berdasarkan F1-score (bukan accuracy), karena
-    # dataset imbalance -- accuracy tinggi bisa menipu kalau model cuma
-    # menebak kelas mayoritas terus. F1 menyeimbangkan precision & recall.
+
     best_name = max(all_metrics, key=lambda n: all_metrics[n]["f1_score"])
     best_pipeline = fitted_pipelines[best_name]
 

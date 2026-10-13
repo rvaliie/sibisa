@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -87,6 +88,13 @@
             align-items: center;
             gap: 10px;
             white-space: nowrap;
+        }
+
+        .sidebar-logo {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+            flex-shrink: 0;
         }
         
         .sidebar.collapsed .sidebar-brand {
@@ -360,6 +368,7 @@
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-brand">
+            <img src="{% static 'images/logo-kota-tarakan.svg' %}" alt="Logo Kota Tarakan" class="sidebar-logo">
             <span class="sidebar-brand-text">SIBISA</span>
             <!-- Fallback icon when collapsed -->
             <i class="bi bi-shield-check d-none"></i>
@@ -382,7 +391,7 @@
                 </a>
             </li>
             <li>
-                <a href="#" class="nav-item" style="opacity: 0.6; cursor: not-allowed;" title="Pengaturan">
+                <a href="{% url 'validator:settings' %}" class="nav-item {% if request.resolver_match.url_name == 'settings' %}active{% endif %}" title="Pengaturan">
                     <i class="bi bi-gear"></i> <span class="nav-text">Pengaturan</span>
                 </a>
             </li>

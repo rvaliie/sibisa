@@ -47,6 +47,29 @@
                 </form>
             </div>
         </section>
+
+        <section class="v-card profile-section">
+            <h3>Ubah Password</h3>
+            <form method="post" class="profile-form">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="{{ password_form.old_password.id_for_label }}">{{ password_form.old_password.label }}</label>
+                    {{ password_form.old_password }}
+                    {% for error in password_form.old_password.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                </div>
+                <div class="mb-3">
+                    <label for="{{ password_form.new_password1.id_for_label }}">{{ password_form.new_password1.label }}</label>
+                    {{ password_form.new_password1 }}
+                    {% for error in password_form.new_password1.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                </div>
+                <div class="mb-3">
+                    <label for="{{ password_form.new_password2.id_for_label }}">{{ password_form.new_password2.label }}</label>
+                    {{ password_form.new_password2 }}
+                    {% for error in password_form.new_password2.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                </div>
+                <button type="submit" class="v-btn-primary"><i class="bi bi-shield-lock"></i> Ubah Password</button>
+            </form>
+        </section>
     </div>
 </div>
 {% endblock %}

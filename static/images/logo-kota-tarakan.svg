@@ -1,0 +1,15 @@
+<svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="80" cy="80" r="74" fill="#0B3B78"/>
+  <circle cx="80" cy="80" r="64" fill="#FFFFFF"/>
+  <circle cx="80" cy="80" r="60" fill="#0B3B78"/>
+  <path d="M80 30L96 42V68C96 84 89 96 80 103C71 96 64 84 64 68V42L80 30Z" fill="#F5F7FA"/>
+  <path d="M80 36L90 44V67C90 80 86 89 80 95C74 89 70 80 70 67V44L80 36Z" fill="#D92D3A"/>
+  <path d="M80 48L88 53V66C88 72 85 78 80 82C75 78 72 72 72 66V53L80 48Z" fill="#F6C453"/>
+  <path d="M48 80H112V89C112 105 97 118 80 118C63 118 48 105 48 89V80Z" fill="#2D9C5D"/>
+  <path d="M54 45H106V58H54V45Z" fill="#F5F7FA"/>
+  <path d="M52 86H108L100 106H60L52 86Z" fill="#F5F7FA"/>
+  <circle cx="80" cy="74" r="8" fill="#F5F7FA"/>
+  <path d="M80 58L83 69H94L85 75L88 86L80 80L72 86L75 75L66 69H77L80 58Z" fill="#F6C453"/>
+  <path d="M39 118C49 104 61 97 80 97C99 97 111 104 121 118L117 129H43L39 118Z" fill="#E5E7EB"/>
+  <text x="80" y="132" text-anchor="middle" font-size="10" font-family="Arial, sans-serif" font-weight="700" fill="#F5F7FA" letter-spacing="1.2">KOTA TARAKAN</text>
+</svg>

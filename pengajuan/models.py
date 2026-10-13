@@ -33,8 +33,34 @@ class Pengajuan(models.Model):
         DISETUJUI = "DISETUJUI", "Disetujui"
         DITOLAK = "DITOLAK", "Ditolak"
 
+    class Pekerjaan(models.TextChoices):
+        PNS = "PNS", "PNS"
+        TNI_POLRI = "TNI/POLRI", "TNI/POLRI"
+        SWASTA = "Swasta", "Swasta"
+        WIRASWASTA = "Wiraswasta", "Wiraswasta"
+        PETANI = "Petani", "Petani"
+        BURUH = "Buruh", "Buruh"
+        TIDAK_BEKERJA = "Tidak Bekerja", "Tidak Bekerja"
+        LAINNYA = "Lainnya", "Lainnya"
+
+    class DayaListrik(models.TextChoices):
+        VA_450 = "450 VA", "450 VA"
+        VA_900 = "900 VA", "900 VA"
+        VA_1300 = "1300 VA", "1300 VA"
+        VA_2200 = "2200 VA", "2200 VA"
+        LEBIH_DARI_2200 = ">2200 VA", ">2200 VA"
+
+    class KondisiRumah(models.TextChoices):
+        MILIK_SENDIRI = "Milik Sendiri", "Milik Sendiri"
+        KONTRAK = "Kontrak/Sewa", "Kontrak/Sewa"
+        DINAS = "Dinas", "Dinas"
+        LAINNYA = "Lainnya", "Lainnya"
+
     warga = models.ForeignKey(Warga, on_delete=models.CASCADE, related_name="pengajuan_list")
     jenis_bantuan = models.ForeignKey(JenisBantuan, on_delete=models.PROTECT, related_name="pengajuan_list")
+    pekerjaan = models.CharField(max_length=30, choices=Pekerjaan.choices, default=Pekerjaan.LAINNYA)
+    daya_listrik = models.CharField(max_length=20, choices=DayaListrik.choices, default=DayaListrik.VA_450)
+    kondisi_rumah = models.CharField(max_length=30, choices=KondisiRumah.choices, default=KondisiRumah.MILIK_SENDIRI)
     jumlah_tanggungan = models.PositiveSmallIntegerField()
     penghasilan = models.PositiveIntegerField(help_text="Rupiah per bulan")
     # desil sengaja nullable: diisi belakangan oleh validator, bukan oleh warga

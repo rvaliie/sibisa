@@ -1,4 +1,6 @@
 from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 from django.shortcuts import get_object_or_404, redirect, render
 
 from accounts.decorators import role_required
@@ -7,7 +9,7 @@ from ml_engine.predict import ModelBelumDilatih, predict_kelayakan
 from pengajuan.models import HasilPrediksi, Pengajuan, Verifikasi
 from pengajuan.utils import mask_nik
 
-from .forms import DesilForm, KeputusanForm
+from .forms import DesilForm, KeputusanForm, ValidatorProfileForm
 
 
 @role_required(User.Role.VALIDATOR)
@@ -39,6 +41,47 @@ def dashboard(request):
         "disetujui": disetujui,
         "ditolak": ditolak,
         "data_terbaru": data_terbaru,
+    })
+
+
+@role_required(User.Role.VALIDATOR)
+def settings(request):
+    """Mengatur profil validator dan password akun."""
+    profile_form = ValidatorProfileForm(instance=request.user)
+    password_form = PasswordChangeForm(request.user)
+
+    if request.method == "POST":
+        has_profile_submit = "save_profile" in request.POST
+        has_password_submit = any(field in request.POST for field in ["old_password", "new_password1", "new_password2"])
+
+        profile_saved = False
+        password_saved = False
+
+        if has_profile_submit:
+            profile_form = ValidatorProfileForm(request.POST, instance=request.user)
+            if profile_form.is_valid():
+                profile_form.save()
+                profile_saved = True
+
+        if has_password_submit:
+            password_form = PasswordChangeForm(request.user, request.POST)
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)
+                password_saved = True
+
+        if profile_saved or password_saved:
+            messages.success(request, "Perubahan pengaturan berhasil disimpan.")
+            return redirect("validator:settings")
+
+        if has_profile_submit and not profile_form.is_valid():
+            messages.error(request, "Data profil tidak valid. Periksa kembali form yang Anda isi.")
+        if has_password_submit and not password_form.is_valid():
+            messages.error(request, "Password tidak valid. Periksa password lama dan konfirmasi password baru.")
+
+    return render(request, "validator/settings.html", {
+        "profile_form": profile_form,
+        "password_form": password_form,
     })
 
 

@@ -1,6 +1,17 @@
 from django import forms
 
+from accounts.models import User
 from pengajuan.models import Pengajuan, Verifikasi
+
+
+class ValidatorProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ["first_name"]
+        labels = {"first_name": "Nama Lengkap"}
+        widgets = {
+            "first_name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Masukkan nama lengkap"}),
+        }
 
 
 class DesilForm(forms.ModelForm):
