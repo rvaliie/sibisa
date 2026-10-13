@@ -91,12 +91,12 @@
         }
 
         .sidebar-logo {
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             object-fit: contain;
             flex-shrink: 0;
         }
-        
+
         .sidebar.collapsed .sidebar-brand {
             padding-left: 0;
         }
@@ -386,10 +386,8 @@
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-brand">
-            <img src="{% static 'images/logo-kota-tarakan.svg' %}" alt="Logo Kota Tarakan" class="sidebar-logo">
+            <img src="{% static 'img/logo-kota-tarakan.png' %}" alt="Logo Kota Tarakan" class="sidebar-logo">
             <span class="sidebar-brand-text">SIBISA</span>
-            <!-- Fallback icon when collapsed -->
-            <i class="bi bi-shield-check d-none"></i>
         </div>
 
         <ul class="nav-menu">
@@ -469,18 +467,8 @@
             const sidebar = document.getElementById("sidebar");
             const toggleBtn = document.getElementById("sidebarToggle");
             
-            // Handle fallback icon visibility
-            const brandText = sidebar.querySelector('.sidebar-brand-text');
-            const fallbackIcon = sidebar.querySelector('.sidebar-brand i');
-
             toggleBtn.addEventListener("click", function() {
                 sidebar.classList.toggle("collapsed");
-                
-                if (sidebar.classList.contains("collapsed")) {
-                    fallbackIcon.classList.remove("d-none");
-                } else {
-                    fallbackIcon.classList.add("d-none");
-                }
             });
         });
     </script>
