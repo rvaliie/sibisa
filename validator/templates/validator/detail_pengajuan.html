@@ -169,7 +169,7 @@
 
     <!-- HASIL PREDIKSI ML -->
     <div class="v-card" style="{% if pengajuan.desil is None %}opacity:0.5; pointer-events:none;{% endif %}">
-        <h3 class="section-title">Hasil Prediksi Machine Learning</h3>
+        <h3 class="section-title">Rekomendasi Kelayakan Bantuan</h3>
         
         {% if pengajuan.hasil_prediksi %}
             <div class="prediction-box {% if pengajuan.hasil_prediksi.prediksi == 'TIDAK_LAYAK' %}danger{% endif %}">
