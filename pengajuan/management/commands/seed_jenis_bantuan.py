@@ -8,7 +8,7 @@ DUMMY_JENIS_BANTUAN = [
 
 
 class Command(BaseCommand):
-    help = "Mengisi data JenisBantuan dummy supaya form pengajuan warga bisa langsung dites (Tahap 4)."
+    help = "Mengisi data contoh JenisBantuan supaya form pengajuan warga bisa langsung dites (Tahap 4)."
 
     def handle(self, *args, **options):
         JenisBantuan.objects.exclude(nama_bantuan="Bantuan Pangan").update(status=False)

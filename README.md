@@ -27,13 +27,16 @@ Buka http://127.0.0.1:8000/admin untuk melihat/menambah data lewat Django admin
 - `validator/` - fitur khusus validator (Tahap 5)
 - `ml_engine/` - package Python biasa (bukan Django app) untuk
   preprocessing, training, dan prediksi (Tahap 6-7)
-- `data/data_historis_dummy.csv` - dataset dummy 300 baris untuk training
-  awal model ML (lihat catatan di bawah)
+- `data/dataset.csv` - dataset simulasi 1.000 baris untuk training
+  model ML (lihat catatan di bawah)
 
-## Tentang data/data_historis_dummy.csv
+## Tentang data/dataset.csv
 
-Dataset simulasi, BUKAN data asli warga. Kolom: `desil`, `jumlah_tanggungan`,
-`penghasilan`, `status` (Diterima/Ditolak). Distribusi status sekitar 73%
-Diterima / 27% Ditolak -- sengaja tidak seimbang untuk melatih evaluasi model
-yang benar (accuracy saja tidak cukup, perlu precision/recall/F1). Ganti
-dengan data historis asli kelurahan (setelah dianonimkan) begitu tersedia.
+Dataset simulasi, BUKAN data asli warga. Dataset berisi 300 baris awal dan
+700 baris simulasi tambahan yang dibuat secara pseudorandom dengan seed
+`20261014`; baris awal dipertahankan. Distribusi akhir: 733 `Diterima` dan
+267 `Ditolak`. Kolom: `desil`, `jumlah_tanggungan`, `penghasilan`, `status`
+(Diterima/Ditolak). Karena baris tambahan dan labelnya sintetis, metrik hasil
+training hanya untuk demonstrasi teknis dan bukan bukti performa pada warga
+nyata. Ganti dengan data historis asli kelurahan (setelah dianonimkan) dan
+evaluasi pada data terpisah sebelum menarik kesimpulan penggunaan lapangan.

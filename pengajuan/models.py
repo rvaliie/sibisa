@@ -104,7 +104,7 @@ class Verifikasi(models.Model):
 
 class DataHistoris(models.Model):
     """Dataset terpisah untuk training ML, TIDAK terhubung FK ke Pengajuan.
-    Diisi lewat import CSV (lihat data/data_historis_dummy.csv), bukan lewat alur transaksi."""
+    Diisi lewat import CSV (lihat data/dataset.csv), bukan lewat alur transaksi."""
 
     class Status(models.TextChoices):
         DITERIMA = "DITERIMA", "Diterima"

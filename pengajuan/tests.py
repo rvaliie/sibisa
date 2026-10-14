@@ -67,7 +67,7 @@ class PredictTest(TestCase):
 
     def test_predict_warga_miskin_lebih_mungkin_layak(self):
         """Bukan jaminan matematis (model probabilistik), tapi pola umum
-        dataset dummy kita: desil rendah + tanggungan banyak + penghasilan
+        dataset simulasi: desil rendah + tanggungan banyak + penghasilan
         kecil -> lebih mungkin LAYAK dibanding desil tinggi + tanggungan
         sedikit + penghasilan besar."""
         miskin = predict.predict_kelayakan(desil=1, jumlah_tanggungan=6, penghasilan=400000)

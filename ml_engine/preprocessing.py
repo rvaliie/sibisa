@@ -7,7 +7,7 @@ TARGET = "status"
 STATUS_DITERIMA = "Diterima"
 STATUS_DITOLAK = "Ditolak"
 
-DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "data_historis_dummy.csv"
+DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "dataset.csv"
 
 
 def load_dataset(csv_path: Path = DATA_PATH) -> pd.DataFrame:
